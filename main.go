@@ -102,21 +102,36 @@ func FindStockNumberBySTDLib() {
 	fw := csv.NewWriter(f)
 	// 'dtype', '國際證券辨識號碼', '上市日', '市場別', '產業別', 'CFI'
 	fw.Write([]string{"有價證券代號", "名稱", "國際證券辨識號碼(ISIN Code)", "上市日", "市場別", "產業別", "CFI", "備註"})
+	sep := string([]byte{227, 128, 128})
 	for _, i := range StockList {
-		SplitStr := strings.Split(i.Dtype, " ")
-		fw.Write([]string{
-			SplitStr[0],
-			SplitStr[1],
-			i.IdetifyNumber,
-			i.Date,
-			i.MarketCategory,
-			i.IndustryCategory,
-			i.CFI,
-			i.Note,
-		})
+		SplitStr := strings.Split(i.Dtype, sep)
+		if len(SplitStr) > 1 {
+			fw.Write([]string{
+				SplitStr[0],
+				SplitStr[1],
+				i.IdetifyNumber,
+				i.Date,
+				i.MarketCategory,
+				i.IndustryCategory,
+				i.CFI,
+				i.Note,
+			})
+		} else {
+			fw.Write([]string{
+				i.Dtype,
+				" ",
+				i.IdetifyNumber,
+				i.Date,
+				i.MarketCategory,
+				i.IndustryCategory,
+				i.CFI,
+				i.Note,
+			})
+		}
+
 	}
 	fw.Flush()
-	log.Println("Write to csv sucesse.")
+	log.Println("Write to .csv success.")
 }
 
 //convert BIG5 to UTF-8
